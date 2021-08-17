@@ -17,8 +17,8 @@ public class VerificationToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String token;
+    private Instant expiryDate;
 
     @OneToOne
     private User user;
-    private Instant expiryDate;
 }

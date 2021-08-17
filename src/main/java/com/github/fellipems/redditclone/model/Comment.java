@@ -22,11 +22,11 @@ public class Comment {
 
     @NotEmpty
     private String text;
+    private Instant createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postId", referencedColumnName = "postId")
     private Post post;
-    private Instant createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "userId")

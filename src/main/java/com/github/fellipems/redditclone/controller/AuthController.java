@@ -22,7 +22,7 @@ public class AuthController {
         return new ResponseEntity<>("Usuário registrado com sucesso!", HttpStatus.OK);  // sem erros e se for registrado, chama o ResponseEntity com status ok
     }
 
-    @GetMapping("accountVerification/{token}")  // API de confirmação e ativação da conta
+    @GetMapping("accountverification/{token}")  // API de confirmação e ativação da conta
     public ResponseEntity<String> verifyAccount(@PathVariable String token){
         authService.verifyAccount(token);
         return new ResponseEntity<>("Conta ativada com sucesso. Obrigado por se cadastrar no SB Reddit <3", HttpStatus.OK);

@@ -13,16 +13,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-@Slf4j      // cria uma instância do objeto logger Slf4j
+@Slf4j      // cria uma instância do objeto logger Slf4j para fazer o log da nossa aplicação onde tivermos o log.info, error e afins
 public class MailService {
 
     private final JavaMailSender mailSender;
     private final MailContentBuilder mailContentBuilder;
 
-    @Async  // tempo de resposta mais rápido; este Async está ligado com o EnableAsync da classe mainApplication para rodar em threads diferentes e ser mais rápido a respósta do email de verificação
+    @Async  // tempo de resposta mais rápido; este Async está ligado com o EnableAsync da classe mainApplication para rodar em threads diferentes e ser mais rápido a resposta do email de verificação
     public void sendMail(NotificationEmail notificationEmail) {     // este método pega o objeto do tipo notificationEmail como input
         MimeMessagePreparator messagePreparator = mimeMessage -> {
-            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);   // criaçã oda instância do MimeMessageHelper
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);   // criação da instância do MimeMessageHelper
             messageHelper.setFrom("springreddit@email.com");    // informação do remetente
             messageHelper.setTo(notificationEmail.getRecipient());      // métodos setTo, setSubject e setText mapeados do objeto classe NotificationEmail
             messageHelper.setSubject(notificationEmail.getSubject());

@@ -18,7 +18,7 @@ public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long voteId;
-    //private VoteType voteType;
+    //private VoteType voteType;  se é upvote ou downvote
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)

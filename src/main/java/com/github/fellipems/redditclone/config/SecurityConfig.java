@@ -28,8 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {       // exte
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf().disable()  // desabilitando o csrf pois usamos cookies para autenticar nossas sessões. Usando webTokens pois rests API são stateless
-                .authorizeRequests()
-                .antMatchers("/api/auth/**")       // permitindo qualquer requests da nossa API do backend e os que não forem desta URI bloquear e ser autenticado
+                .authorizeRequests()        // authorizeRequest permitindo todas as requests que chegam do nosso backend da API
+                .antMatchers("/api/auth/**")       // permitindo qualquer requests da nossa API do backend e os que não forem desta URI bloquear e deve ser autenticado
                 .permitAll()
                 .antMatchers("/h2/**")
                 .permitAll()
@@ -46,7 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {       // exte
 
     }
 
-    @Bean
+    @Bean   // devemos criar um bean manualmente dentro da classe de configuração e teremos um autowired e uma instancia do BcryptEncoder
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();     // hash de criptografia de nossas senhas
     }

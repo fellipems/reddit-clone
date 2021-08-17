@@ -30,11 +30,11 @@ public class Post {
     @Lob        // lob por causa dos textos extensos da descrição
     private String description;
     private Integer voteCount;      // contador de vote pelos post acompanhando de uma referÊncia para o usuário do post
+    private Instant createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;      // um post pode ter vários usuários
-    private Instant createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id", referencedColumnName = "id")

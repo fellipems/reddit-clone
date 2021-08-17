@@ -25,13 +25,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service    // classe que vai ter toda nossa lógica de negócio para registrar os usuários. Criar os usuário e salva-los no BD e enviar o email de confirmação
-@AllArgsConstructor
+@AllArgsConstructor     // construtor para nossa injeção de dependência, assim não precisaremos usar o @Autowired já que não é muito recomendado para injeção
 public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final VerificationTokenRepository verificationTokenRepository;
-    private final MailService mailService;  // injetando o serviço de email
+    private final MailService mailService;  // injetando o serviço de email para enviar
     private final AuthenticationManager authenticationManager;  // como é uma interface, se não explicitarmos qual bean criar, spring lançará uma exceção. Teremos que criar um bean dentro do nosso SecurityConfig para resolver isso e ele saber qual injetar
     private final JwtProvider jwtProvider;  // injetando a classe JwtProvider
 
@@ -50,8 +50,8 @@ public class AuthService {
         mailService.sendMail(new NotificationEmail("Bem vindo! Por favor ative sua conta!",
                 user.getEmail(),
                 "Obrigado por se registrar no SB Reddit. Por último, pedimos para que ative a sua conta!\n" +
-                        "Por favor, click no link abaixo para fazer a ativação da sua nova conta para desfrutar do nosso site!\n" +
-                        "http://localhost:8080/api/auth/accountVerification/" + token)); // primeiro argumento é o assunto, segundo é o destinatário e o último é o corpo do email;
+                        "Por favor, clique no link abaixo para fazer a ativação da sua nova conta para desfrutar do nosso site.\n" +
+                        "http://localhost:8081/api/auth/accountverification/" + token)); // primeiro argumento é o assunto, segundo é o destinatário e o último é o corpo do email;
     }
 
     private String generateVerificationToken(User user) {     // geração do token de verificação
@@ -64,16 +64,16 @@ public class AuthService {
     }       // enviando o email de ativação para os usuários
 
     public void verifyAccount(String token) {       // verificando a conta com o token gerado
-        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token); // como retorna um Optional(que pode ter ou não) colcoaremos um exception throw
+        Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token); // como retorna um Optional(que pode ter ou não) colocaremos um exception throw
         verificationToken.orElseThrow(() -> new SpringRedditException("Token Inválido!!")); // entra aqui caso o Optional retorne vazio/não exista
-        fetchUserAndEnable(verificationToken.get());    // se o usuário foi associado ao token, vamos dar permissão à ele
+        fetchUserAndEnable(verificationToken.get());    // se o usuário foi associado ao token, vamos dar permissão à ele. Agora que temos a query que corresponde ao usuário e associado ao seu token, vamos habilitar o usuário.
     }
 
     @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {  // busca o usuário do token e autentica/valida
         String username = verificationToken.getUser().getUsername();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringRedditException("Usuário de nome " + username + " não foi encontrado!"));
-        user.setEnabled(true);  // permitindo o usuário já validado o email
+        user.setEnabled(true);  // permitindo o usuário que já validou o email
         userRepository.save(user);
     }
 
@@ -88,7 +88,7 @@ public class AuthService {
         fluxo de autenticação JWT - 1 login request, 2 criação do JWT, 3 envia JWT para o client, 4 Cliente usa JWT para se autenticar, 5 Validação do JWT, 6 Resposta para o client
         chama o AuthService(cria o JWT) que receberá o request de autenticação em que, dentro dele, terá o username e password da request, em que vamos criar o objeto UsernamePassword token de autenticação.
         Passamos esse objeto criado para o AuthenticationManager que vai cuidar de toda a autenticação dos nossos usuários, esse Manager vai usar uma interface de UserDetailsService
-        em que vai pegar os detalhes do ususário para múltiplos recursos acessando noss BD para ver se os dados estão corretos ou não. Se estiverem corretos, o UserDetails passará para o gerenciador de autenticação(AuthenticationManager)
+        em que vai pegar os detalhes do ususário para múltiplos recursos acessando nosso BD para ver se os dados estão corretos ou não. Se estiverem corretos, o UserDetails passará para o gerenciador de autenticação(AuthenticationManager)
         que retornará um objeto Authentication para terminar nosso serviço de autenticação(voltando para o AuthService)
     */
 }
